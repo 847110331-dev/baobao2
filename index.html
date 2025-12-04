@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO | 视觉作品集</title>
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    
+    <style>
+        /* === 全局设定 === */
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-sub: #888888;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 50px; /* 稍微减小两侧边距 */
+        }
+
+        /* === 1. Header (紧凑型设计) === */
+        header {
+            /* 关键修改：不再使用 height: 70vh */
+            padding-top: 100px; /* 距离顶部的距离 */
+            padding-bottom: 40px; /* 距离下划线的距离 */
+            margin-bottom: 60px;  /* 距离视频区域的距离 */
+            
+            border-bottom: 1px solid #1a1a1a;
+            
+            /* 布局：名字在左，简介在右 */
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* 底部对齐 */
+        }
+
+        .header-left h1 {
+            font-size: 4rem; /* 保持大字号，但不夸张 */
+            font-weight: 700;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .role-list {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            font-family: monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .role-list span { margin-right: 20px; }
+
+        /* 右侧简介：稍微小一点，平衡视觉 */
+        .header-right {
+            text-align: right;
+            max-width: 300px;
+            color: #555;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            padding-bottom: 5px; /* 微调对齐 */
+        }
+
+        /* === 2. 瀑布流布局 === */
+        .gallery-wrapper {
+            display: flex;
+            gap: 50px; /* 稍微收紧列间距 */
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 100px; /* 视频之间的垂直间距也稍微收紧，更紧凑 */
+        }
+
+        /* 右侧列下沉，制造错落感 */
+        .column.right-col {
+            padding-top: 120px; 
+        }
+
+        /* === 3. 视频卡片 === */
+        .video-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .video-inner {
+            background: #000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: transform 0.4s ease;
+        }
+        
+        .video-inner:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 尺寸控制 */
+        .landscape { width: 100%; aspect-ratio: 16/9; }
+        .portrait { width: 55%; margin: 0 auto; aspect-ratio: 9/16; }
+
+        /* === 4. 信息排版 (左侧对齐) === */
+        .info {
+            margin-top: 15px;
+            border-left: 1px solid #333;
+            padding-left: 12px;
+        }
+
+        .info h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #eee;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .info p {
+            font-size: 0.75rem;
+            color: #666;
+            margin: 5px 0 0 0;
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+
+        /* === 5. Footer === */
+        footer {
+            margin-top: 150px;
+            padding: 80px 0;
+            border-top: 1px solid #222;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .footer-label {
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 邮箱样式 */
+        a.big-email {
+            font-size: 3rem; 
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            line-height: 1.2;
+        }
+
+        a.big-email::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 5px;
+            width: 0;
+            height: 3px;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+        a.big-email:hover::after { width: 100%; }
+
+        .copyright {
+            margin-top: 40px;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        /* Plyr 样式 */
+        .container { --plyr-color-main: #fff; --plyr-video-background: #000; }
+
+        /* 手机端适配 */
+        @media (max-width: 900px) {
+            .container { padding: 0 20px; }
+            
+            /* 手机上头部变垂直排列 */
+            header { flex-direction: column; align-items: flex-start; margin-bottom: 40px; padding-top: 60px; }
+            .header-right { text-align: left; margin-top: 20px; max-width: 100%; }
+            h1 { font-size: 3rem; }
+            
+            .gallery-wrapper { flex-direction: column; gap: 60px; }
+            .column.right-col { padding-top: 0; }
+            .column { gap: 60px; }
+            .portrait { width: 80%; }
+            
+            a.big-email { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <div class="header-left">
+            <h1>[鲍子辰]</h1>
+            <div class="role-list">
+                <span>Video Editor</span>
+                <span>Colorist</span>
+                <span>Sound Design</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            Based in Hangzhou.<br>
+            Creating visual narratives with rhythm.<br>
+            2021 - 2025
+        </div>
+    </header>
+
+    <div class="gallery-wrapper">
+
+        <div class="column left-col">
+            
+            <div class="video-box">
+                <div class="video-inner landscape">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE1_1%2Bslogan.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info">
+                    <h3>LEE门店形象片</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner portrait">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A1.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info" style="width: 40%; margin: 15px auto 0;">
+                    <h3>CHAMPION形象片</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner landscape">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E7%89%87%20ONEMORE.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info">
+                    <h3>ONEMORE形象片</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner portrait">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/1203Valentino%E6%AA%80%E5%81%A5%E6%AC%A1VLOG-%E5%89%AA%E8%BE%91%E7%89%88_x264.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info" style="width: 55%; margin: 15px auto 0;">
+                    <h3>ValentinoX檀健次Vlog</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="column right-col">
+
+            <div class="video-box">
+                <div class="video-inner portrait">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/0912UA%E6%9E%97%E5%B8%8C%E5%A6%A4%E9%AB%98%E5%B0%94%E5%A4%AB%E6%B7%B7%E5%89%AA%20.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info" style="width: 40%; margin: 15px auto 0;">
+                    <h3>UA高尔夫林希妤</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner landscape">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/GMXY%E6%98%A5%E5%AF%BC%E6%BC%94%E7%89%88%E6%9C%80%E7%BB%88.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info">
+                    <h3>GMXY古木夕洋形象片</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner portrait">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%A5%BD%E8%BF%90%E8%99%8E%E8%99%8E%E6%9D%A5TVC.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info" style="width: 55%; margin: 15px auto 0;">
+                    <h3>CHAMPION虎年TVC</h3>
+                    <p>Post-Production Workflow/Process</p>
+                </div>
+            </div>
+
+            <div class="video-box">
+                <div class="video-inner landscape">
+                    <video class="js-player" playsinline controls>
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Naturehike%2023SS.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="info">
+                    <h3>Naturehike形象</h3>
+                    <p>color grading</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <span class="footer-label">Project Inquiry</span>
+            <a href="mailto:your@email.com" class="big-email">15906782325@163.com</a>
+            
+            <div class="copyright">
+                © 2025 [BAOZICHEN]. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const players = Plyr.setup('.js-player', {
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+            hideControls: true,
+            resetOnEnd: true,
+        });
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    });
+</script>
+
+</body>
+</html>
