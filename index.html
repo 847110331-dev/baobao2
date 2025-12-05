@@ -30,26 +30,22 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 50px; /* 稍微减小两侧边距 */
+            padding: 0 50px;
         }
 
-        /* === 1. Header (紧凑型设计) === */
+        /* === Header === */
         header {
-            /* 关键修改：不再使用 height: 70vh */
-            padding-top: 100px; /* 距离顶部的距离 */
-            padding-bottom: 40px; /* 距离下划线的距离 */
-            margin-bottom: 60px;  /* 距离视频区域的距离 */
-            
+            padding-top: 100px;
+            padding-bottom: 40px;
+            margin-bottom: 60px;
             border-bottom: 1px solid #1a1a1a;
-            
-            /* 布局：名字在左，简介在右 */
             display: flex;
             justify-content: space-between;
-            align-items: flex-end; /* 底部对齐 */
+            align-items: flex-end;
         }
 
         .header-left h1 {
-            font-size: 4rem; /* 保持大字号，但不夸张 */
+            font-size: 4rem;
             font-weight: 700;
             margin: 0;
             line-height: 1;
@@ -66,99 +62,143 @@
         }
         .role-list span { margin-right: 20px; }
 
-        /* 右侧简介：稍微小一点，平衡视觉 */
         .header-right {
             text-align: right;
             max-width: 300px;
             color: #555;
             font-size: 0.85rem;
             line-height: 1.5;
-            padding-bottom: 5px; /* 微调对齐 */
+            padding-bottom: 5px;
         }
 
-        /* === 2. 瀑布流布局 === */
+        /* === 主力瀑布流布局 === */
         .gallery-wrapper {
             display: flex;
-            gap: 50px; /* 稍微收紧列间距 */
+            gap: 50px;
         }
 
         .column {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 100px; /* 视频之间的垂直间距也稍微收紧，更紧凑 */
+            gap: 100px;
         }
 
-        /* 右侧列下沉，制造错落感 */
-        .column.right-col {
-            padding-top: 120px; 
-        }
+        .column.right-col { padding-top: 120px; }
 
-        /* === 3. 视频卡片 === */
-        .video-box {
-            position: relative;
-            width: 100%;
-        }
-
+        .video-box { position: relative; width: 100%; }
+        
         .video-inner {
             background: #000;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             transition: transform 0.4s ease;
         }
-        
-        .video-inner:hover {
-            transform: translateY(-5px);
-        }
+        .video-inner:hover { transform: translateY(-5px); }
 
-        /* 尺寸控制 */
         .landscape { width: 100%; aspect-ratio: 16/9; }
         .portrait { width: 55%; margin: 0 auto; aspect-ratio: 9/16; }
 
-        /* === 4. 信息排版 (左侧对齐) === */
         .info {
             margin-top: 15px;
             border-left: 1px solid #333;
             padding-left: 12px;
         }
+        .info h3 { font-size: 0.95rem; font-weight: 700; color: #eee; margin: 0; letter-spacing: 0.5px; }
+        .info p { font-size: 0.75rem; color: #666; margin: 5px 0 0 0; font-family: monospace; text-transform: uppercase; }
 
-        .info h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #eee;
-            margin: 0;
-            letter-spacing: 0.5px;
+        /* === [新功能] 更多作品区域样式 === */
+        .more-section {
+            margin-top: 150px;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 60px;
         }
 
-        .info p {
-            font-size: 0.75rem;
-            color: #666;
-            margin: 5px 0 0 0;
+        .more-btn-container { text-align: center; margin-bottom: 40px; }
+
+        #loadMoreBtn {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 15px 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
             font-family: monospace;
-            text-transform: uppercase;
         }
 
-        /* === 5. Footer === */
+        #loadMoreBtn:hover {
+            border-color: #fff;
+            background: #fff;
+            color: #000;
+        }
+
+        #hiddenGallery {
+            display: none;
+            /* 4列布局 */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            /* 顶部对齐，防止竖屏视频把整行撑得太难看 */
+            align-items: start;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .small-item { width: 100%; }
+        
+        /* 默认横屏小视频 */
+        .small-video-inner {
+            width: 100%;
+            aspect-ratio: 16/9; 
+            background: #000;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        /* 🔥🔥 [最终修复版] 竖屏视频样式 🔥🔥 */
+        /* 彻底解决裁剪问题，让视频完整显示 */
+        .small-video-inner.small-portrait {
+            width: 100% !important; /* 不再限制宽度，填满格子，看起来更大气 */
+            aspect-ratio: 9/16 !important; /* 强制锁定竖屏比例 */
+            display: flex !important;
+            flex-direction: column;
+        }
+
+        /* 强制覆盖 Plyr 内部计算的比例 (核心代码) */
+        .small-video-inner.small-portrait .plyr,
+        .small-video-inner.small-portrait .plyr__video-wrapper {
+            height: 100% !important;
+            padding-bottom: 0 !important; /* 禁用 Plyr 的默认 padding */
+            aspect-ratio: 9/16 !important;
+        }
+        
+        .small-video-inner.small-portrait video {
+            object-fit: cover !important; /* 填满容器 */
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .small-info {
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #555;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === Footer === */
         footer {
             margin-top: 150px;
             padding: 80px 0;
             border-top: 1px solid #222;
         }
 
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .footer-label {
-            font-size: 0.8rem;
-            color: #555;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* 邮箱样式 */
+        .footer-content { display: flex; flex-direction: column; align-items: flex-start; }
+        .footer-label { font-size: 0.8rem; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        
         a.big-email {
             font-size: 3rem; 
             font-weight: 700;
@@ -166,33 +206,17 @@
             position: relative;
             line-height: 1.2;
         }
-
         a.big-email::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 5px;
-            width: 0;
-            height: 3px;
-            background-color: #fff;
-            transition: width 0.3s ease;
+            content: ''; position: absolute; left: 0; bottom: 5px; width: 0; height: 3px; background-color: #fff; transition: width 0.3s ease;
         }
         a.big-email:hover::after { width: 100%; }
+        .copyright { margin-top: 40px; font-size: 0.7rem; color: #444; }
 
-        .copyright {
-            margin-top: 40px;
-            font-size: 0.7rem;
-            color: #444;
-        }
-
-        /* Plyr 样式 */
         .container { --plyr-color-main: #fff; --plyr-video-background: #000; }
 
-        /* 手机端适配 */
+        /* === 手机适配 === */
         @media (max-width: 900px) {
             .container { padding: 0 20px; }
-            
-            /* 手机上头部变垂直排列 */
             header { flex-direction: column; align-items: flex-start; margin-bottom: 40px; padding-top: 60px; }
             .header-right { text-align: left; margin-top: 20px; max-width: 100%; }
             h1 { font-size: 3rem; }
@@ -203,6 +227,12 @@
             .portrait { width: 80%; }
             
             a.big-email { font-size: 1.8rem; }
+
+            /* 更多作品在手机上改为 2列 */
+            #hiddenGallery { grid-template-columns: repeat(2, 1fr); }
+            
+            /* 手机上竖屏比例 */
+            .small-video-inner.small-portrait { width: 100% !important; }
         }
     </style>
 </head>
@@ -230,12 +260,10 @@
     <div class="gallery-wrapper">
 
         <div class="column left-col">
-            
             <div class="video-box">
                 <div class="video-inner landscape">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE1_1%2Bslogan.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
-                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE1_1%2Bslogan.m4v" type="video/mp4" />
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE1_1%2Bslogan.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE1_1%2Bslogan_x264.mp4" type="video/mp4" />
                     </video>
                 </div>
                 <div class="info">
@@ -246,8 +274,7 @@
 
             <div class="video-box">
                 <div class="video-inner portrait">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A1.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A1.mp4?x-oss-process=video/snapshot,t_1800,f_jpg">
                         <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A1.mp4" type="video/mp4" />
                     </video>
                 </div>
@@ -259,8 +286,7 @@
 
             <div class="video-box">
                 <div class="video-inner landscape">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E7%89%87%20ONEMORE.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E7%89%87%20ONEMORE.mp4?x-oss-process=video/snapshot,t_6000,f_jpg">
                         <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E7%89%87%20ONEMORE.mp4" type="video/mp4" />
                     </video>
                 </div>
@@ -272,9 +298,8 @@
 
             <div class="video-box">
                 <div class="video-inner portrait">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/1203Valentino%E6%AA%80%E5%81%A5%E6%AC%A1VLOG-%E5%89%AA%E8%BE%91%E7%89%88_x264.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
-                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/1203Valentino%E6%AA%80%E5%81%A5%E6%AC%A1VLOG-%E5%89%AA%E8%BE%91%E7%89%88_x264.mp4" type="video/mp4" />
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/1203Valentino%E6%AA%80%E5%81%A5%E6%AC%A1VLOG-%E5%89%AA%E8%BE%91%E7%89%88_x264.mp4?x-oss-process=video/snapshot,t_100,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/1203Valentino%E6%AA%80%E5%81%A5%E6%AC%A1VLOG-%E5%89%AA%E8%BE%91%E7%89%88_new_file%281%29_x264.mp4" type="video/mp4" />
                     </video>
                 </div>
                 <div class="info" style="width: 55%; margin: 15px auto 0;">
@@ -282,15 +307,12 @@
                     <p>Creative Cut</p>
                 </div>
             </div>
-
         </div>
 
         <div class="column right-col">
-
             <div class="video-box">
                 <div class="video-inner portrait">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/0912UA%E6%9E%97%E5%B8%8C%E5%A6%A4%E9%AB%98%E5%B0%94%E5%A4%AB%E6%B7%B7%E5%89%AA%20.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/0912UA%E6%9E%97%E5%B8%8C%E5%A6%A4%E9%AB%98%E5%B0%94%E5%A4%AB%E6%B7%B7%E5%89%AA%20.m4v?x-oss-process=video/snapshot,t_300,f_jpg">
                         <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/0912UA%E6%9E%97%E5%B8%8C%E5%A6%A4%E9%AB%98%E5%B0%94%E5%A4%AB%E6%B7%B7%E5%89%AA%20.m4v" type="video/mp4" />
                     </video>
                 </div>
@@ -302,9 +324,8 @@
 
             <div class="video-box">
                 <div class="video-inner landscape">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/GMXY%E6%98%A5%E5%AF%BC%E6%BC%94%E7%89%88%E6%9C%80%E7%BB%88.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
-                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/GMXY%E6%98%A5%E5%AF%BC%E6%BC%94%E7%89%88%E6%9C%80%E7%BB%88.mp4" type="video/mp4" />
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/GMXY%E6%98%A5%E5%AF%BC%E6%BC%94%E7%89%88%E6%9C%80%E7%BB%88.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/GMXY%E6%98%A5%E5%AF%BC%E6%BC%94%E7%89%88%E6%9C%80%E7%BB%88_x264.mp4" type="video/mp4" />
                     </video>
                 </div>
                 <div class="info">
@@ -315,8 +336,7 @@
 
             <div class="video-box">
                 <div class="video-inner portrait">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%A5%BD%E8%BF%90%E8%99%8E%E8%99%8E%E6%9D%A5TVC.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%A5%BD%E8%BF%90%E8%99%8E%E8%99%8E%E6%9D%A5TVC.mp4?x-oss-process=video/snapshot,t_52000,f_jpg">
                         <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%A5%BD%E8%BF%90%E8%99%8E%E8%99%8E%E6%9D%A5TVC.mp4" type="video/mp4" />
                     </video>
                 </div>
@@ -328,8 +348,7 @@
 
             <div class="video-box">
                 <div class="video-inner landscape">
-                    <video class="js-player" playsinline controls preload="metadata"
-                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Naturehike%2023SS.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                    <video class="js-player" playsinline controls preload="metadata" poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Naturehike%2023SS.m4v?x-oss-process=video/snapshot,t_10000,f_jpg">
                         <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Naturehike%2023SS.m4v" type="video/mp4" />
                     </video>
                 </div>
@@ -338,15 +357,105 @@
                     <p>Color Grading</p>
                 </div>
             </div>
+        </div>
+    </div>
 
+
+    <div class="more-section">
+        
+        <div class="more-btn-container">
+            <button id="loadMoreBtn">VIEW MORE WORKS +</button>
         </div>
 
+        <div id="hiddenGallery">
+            
+            <div class="small-item">
+                <div class="small-video-inner">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E8%8C%85%E5%8F%B01935%20%E6%88%90%E7%89%87_x264.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E8%8C%85%E5%8F%B01935%20%E6%88%90%E7%89%87_x264.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">茅台 1935</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE2_1%EF%BC%8Bslogan.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/LEE2_1%EF%BC%8Bslogan.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">LEE 形象片 II</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E8%8A%B1%E7%B5%AE%20EDH.m4V?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%BD%A2%E8%B1%A1%E8%8A%B1%E7%B5%AE%20EDH.m4V" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">ED形象花絮 </div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/1206%E6%94%B6%E9%9B%86%E6%97%85%E8%A1%8C%E7%9A%84%E9%99%90%E5%AE%9A%E8%89%B2_x264.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/1206%E6%94%B6%E9%9B%86%E6%97%85%E8%A1%8C%E7%9A%84%E9%99%90%E5%AE%9A%E8%89%B2_x264.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">三星Galaxy的旅行</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner small-portrait">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E7%88%86%E6%AC%BE%20bala%E6%91%87%E7%B2%92%E7%BB%92.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E7%88%86%E6%AC%BE%20bala%E6%91%87%E7%B2%92%E7%BB%92.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">Balabala 摇粒绒</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner small-portrait">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%88%9B%E6%84%8F%E8%A7%86%E9%A2%91%20%E6%A3%AE%E9%A9%AC%E4%B8%AD%E8%8D%AF%E9%9E%8B%E5%AD%90.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/%E5%88%9B%E6%84%8F%E8%A7%86%E9%A2%91%20%E6%A3%AE%E9%A9%AC%E4%B8%AD%E8%8D%AF%E9%9E%8B%E5%AD%90.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">森马创意视频</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner small-portrait">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/CHAMPION%E7%94%B5%E5%95%86car%20v1%2010s.m4v?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/CHAMPION%E7%94%B5%E5%95%86car%20v1%2010s.m4v" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">Champion 电商短片</div>
+            </div>
+
+            <div class="small-item">
+                <div class="small-video-inner small-portrait">
+                    <video class="js-player" playsinline controls preload="metadata" 
+                           poster="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A11.mp4?x-oss-process=video/snapshot,t_1000,f_jpg">
+                        <source src="https://baosp.oss-cn-hangzhou.aliyuncs.com/Champion%E5%BD%A2%E8%B1%A11.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="small-info">Champion 形象 II</div>
+            </div>
+
+        </div>
     </div>
 
     <footer>
         <div class="footer-content">
             <span class="footer-label">Project Inquiry</span>
-            <a href="mailto:your@email.com" class="big-email">15906782325@163.com</a>
+            <a href="mailto:15906782325@163.com" class="big-email">15906782325@163.com</a>
             
             <div class="copyright">
                 © 2025 [BAOZICHEN]. All Rights Reserved.
@@ -359,12 +468,27 @@
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // 初始化所有播放器
         const players = Plyr.setup('.js-player', {
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
             hideControls: true,
             resetOnEnd: true,
         });
+
+        // 禁止右键
         document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 处理更多作品按钮
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const hiddenGallery = document.getElementById('hiddenGallery');
+
+        loadMoreBtn.addEventListener('click', function() {
+            hiddenGallery.style.display = 'grid';
+            loadMoreBtn.style.opacity = '0';
+            setTimeout(() => {
+                loadMoreBtn.parentElement.style.display = 'none';
+            }, 300);
+        });
     });
 </script>
 
